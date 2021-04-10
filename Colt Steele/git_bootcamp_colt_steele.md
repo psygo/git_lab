@@ -121,3 +121,122 @@ Git diff summary:
     - `git restore` is a newer version of this workflow.
         - `git restore <file>`
         - `git restore --source HEAD~1 app.js` moves back to the previous commit on only the file `app.js`.
+- `git restore` can also be used to unstage stuff.
+    - `git restore --staged <file-name>`
+- `git reset <commit-hash>` will reset the repo to that commit.
+    - The changes will persist, what will not is the existence of the commits.
+    - This is useful if you commit the wrong stuff to a branch.
+    - `--hard` also gets rid of the changes, they will not appear in the working directory.
+    - This is a per branch procedure.
+- `git revert` actually creates a new commit based on a previous one.
+    - It will prompt the user for a commit message even.
+    - Using `git reset` in teams might be difficult to reconcile.
+        - If you only have the work locally, it might be easier to use `git reset`.
+
+## Pushing and Pulling
+
+- `git push <remote> <local-branch>:<remote-branch>`
+    - `git push remote origin master` = `git push remote origin master:master`
+- `git push -u origin master` ties the upstream of the local master to the remote master, so you can directly use `git push` as a shortcut.
+    - This works on a per branch basis.
+    - Example: `git push -u origin dogs:cats`
+- `git branch -M main` renames the current branch (probably `master`) to `main`, which is the now recommended name by Github.
+
+### Fetching and Pulling
+
+- Remote branches: `<remote>/<branch>`.
+    - `git checkout origin/main` will track the *last time* you communicated with the remote branch.
+- `git branch -r` shows remote branches.
+- By default, only the default branch (`master`/`main`) will be connected to the remote when you clone.
+    - However, if you use `git switch`, `git` will create the associations on the fly.
+    - The older way of doing this was `git checkout --track origin/<branch-name>`.
+- `git fetch` takes remote changes and brings them into the local repository.
+    - They will be stored in the remote branches.
+    - `git status` might say we are up to date, but we are only up to date with what we currently know of the remote.
+    - `git fetch origin` updates all remote branches at once.
+        - This will also show you if there are any new branches on the remote.
+- `git pull` takes remote changes and brings them into the repository all the way into the workspace as well.
+    - `git fetch` + `git merge`
+    - You can get away simply with `git pull` if you're using the `origin` usual default and if there's a tracking reference.
+
+### Github and Remotes
+
+> Pull Requests are not a native part of Git itself.
+
+- Github does offer a way of resolving conflicts on the browser.
+    - But you can also fetch contents from the new branch Github creates when conflicts appear as a result of troublesome PRs.
+    - Follow the in-browser instructions.
+- Branch protection even features patterns, since there might be thousands of branches in a big organization.
+
+## Git Rebase
+
+- It's an alternative to merging.
+- A good tool for cleaning up.
+
+If the master branch is very active, you might need to merge things every time to keep your code up-to-date. This will make your feature branch very noisy in terms of commit messages.
+
+Rebasing then rewrites the history to linearize things more cleanly:
+
+```sh
+git switch feature
+git rebase master
+```
+
+The code above will rebase based on the *tip* of the master branch.
+
+If there are conflicts, resolve them and then `git rebase --continue`.
+
+### When NOT to Rebase
+
+**Do not rebase unless you are positive no one on the team is using those commits**.
+
+### Cleaning Up Manipulating Git History with Interactive Rebase
+
+> Still do apply the golden rule for rebasing.
+
+Use the `-i` flag for interactivity.
+
+`git rebase -i HEAD~4` will rebase interactively up to 4 previous commits. (oldest to newest)
+
+> All of the commands will appear as helpers in the rebasing window.
+
+- `pick`   -> use commit
+- `reword` -> use commit but edit the commit message
+- `edit`   -> use commit but stop for amending (similar to `fixup`)
+- `squash` -> use commit, but meld into previous commit
+- `drop`   -> remove commit, including its contents
+
+If you did something wrong, you can undo it afterwards by looking at the command logs in `git reflog`.
+
+## Tags
+
+### Semantic Versioning
+
+[The original document][semver]
+
+`<major>.<minor>.<patch>
+`
+- Version `1.0.0` is first definition of the public API.
+- Minor features new functionality, which won't break the major release.
+- Do reset patch releases when releasing minors.
+- Major releases might break current software.
+
+
+[semver]: https://semver.org/
+
+### Working with Tags
+
+- `git tag` lists all the tags.
+- `git tag -l "*beta*"` looks for tags with beta in them.
+- `git diff v17.0.0 v17.0.1`
+- `git tag <tagname>`
+    - The annotated version: `git tag -a <tagname>` will open an editor for the tag's annotation.
+- `git show v17.0.0`
+- You can move tags with the `-f` flag.
+- `git tag -d delete-me`
+- `git push --tags` pushes all of the tags.
+    - `git push origin my-tag` to push a single tag.
+
+## Git Behind the Scenes
+
+
