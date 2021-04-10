@@ -239,4 +239,30 @@ If you did something wrong, you can undo it afterwards by looking at the command
 
 ## Git Behind the Scenes
 
+### The `.git` folder
 
+- The `config` folder is the local/repo configuration.
+    - Remote tracking and branches info is usually there.
+    - You can create a section where you configure all colors for git.
+- The `refs` folder.
+    - References
+- The `objects` folder
+    - The heart of git.
+    - A lot of compressed, encrypted binary files.
+    - Git actually stores full snapshots of each point in history.
+    - Hashing
+        - Git uses SHA-1, which generates 40-digit hex numbers.
+        - `echo 'hello' | git hash-object --stdin` will hash `hello`.
+            - Instead of `echo`, you can also directly hash a file `git hash-object dogs.txt -w`.
+            - You can add the `-w` flag to actually make git register the hash as an object.
+            - `git cat-file -p <object-hash>` to concatenate the unhashed object.
+    - Git is a key-value data store.
+        - We can insert any kind of content into a Git repo, and Git will hand us back a unique key we can later use to retrieve the content.
+    - 4 Types of Objects:
+        - Commit
+        - Tree
+            - The structure of the directories.
+        - Blob
+            - Binary Large Object.
+            - They don't even store the name of the file, only the contents.
+        - Annotated Tag
