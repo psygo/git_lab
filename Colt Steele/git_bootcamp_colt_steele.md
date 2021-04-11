@@ -259,10 +259,48 @@ If you did something wrong, you can undo it afterwards by looking at the command
     - Git is a key-value data store.
         - We can insert any kind of content into a Git repo, and Git will hand us back a unique key we can later use to retrieve the content.
     - 4 Types of Objects:
+        - Tag -> (points to) Commit -> Tree -> Blob
         - Commit
+            - Commits have info about their respective trees and their respective parent (previous commit).
+            - Not a binary file.
+            - If a file in the folder doesn't change, git uses the previous blob, for efficiency.
         - Tree
             - The structure of the directories.
+            - A tree that points to the hashes that point to the blobs.
+            - `git cat-file -p master^{tree}`
+                - `-t` tell us the type of the git file.
         - Blob
             - Binary Large Object.
             - They don't even store the name of the file, only the contents.
         - Annotated Tag
+            - Reference to a commit
+
+## Reflogs
+
+> Short for reference logs.
+
+- In the `logs` folder, there's a readable `HEAD` file, which tracks HEAD changes.
+- Git reflogs are **local** and they do **expire**.
+- `git reflog show HEAD` will show the movement of the HEAD, it's a history of commands, not only of commits.
+- `git checkout HEAD@{2}` is not the same as using `HEAD~2` because `HEAD@{2}` might not even be a commit.
+    - You can also use time based references:
+        - `master@{one.week.ago}`
+        - `branch1@{2.days.ago}`
+- You can rollback `git reset --hard` with reflogs.
+    - `git reset --hard master@{1}` will reattach the HEAD as well.
+    - You can also undo a rebase.
+
+## Git Configs
+
+### Aliases
+
+Resources:
+
+- [gitalias repo][gitalias_repo]: a repo with a systematized way of dealing with aliases.
+- [Must Have Git Aliases: Advanced Examples][must_have_git_aliases]
+- [The Ultimate Git Alias Setup Gist][ultimate_alias_gist]
+
+
+[gitalias_repo]: https://github.com/GitAlias/gitalias
+[must_have_git_aliases]: https://www.durdn.com/blog/2012/11/22/must-have-git-aliases-advanced-examples/
+[ultimate_alias_gist]: https://gist.github.com/mwhite/6887990
